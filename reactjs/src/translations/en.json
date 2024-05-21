@@ -1,0 +1,143 @@
+{
+    "homeheader":{
+      "speciality":"Medical Specialty",
+      "search-doctor":"Find a doctor by specialty",
+      "health-facility":"Health facilities",
+      "selected-room":"Choose hospital clinic",
+      "doctor":"Doctor",
+      "selected-doctor":"Choose a good doctor",
+      "fee":"Checkup package",
+      "check-health":"General health check",
+      "support":"Support",
+       "welcome":"Welcome"
+    },
+     "banner":{
+        "title1":"MEDICAL BACKGROUND",
+        "title2":"COMPREHENSIVE HEALTH CARE",
+        "search":"Find a specialist",
+        "child1":"Specialized examination",
+        "child2":"Remote examination",
+        "child3":"General examination",
+        "child4":"Medical tests",
+        "child5":"Mental health",
+        "child6":"Dental examination"
+    },
+     "specialty":{
+     "title":"Popular specialties",
+     "header":"WATCH MORE"
+    },
+     "medical":{
+        "title":"Medical facilities",
+        "header":"SEARCH"
+     },
+      "doctor":{
+       "title":"Last week featured doctors",
+       "header":"SEARCH"
+     },
+     "handbook":{
+       "title":"Handbook",
+       "header":"ALL ARTICLES"
+     },
+    "menu": {
+        "system": {
+            "header": "System",
+            "system-administrator": {
+                "header": "System Administrator",
+                "user-manage": "User manage",
+                "user-redux": "Manage user using redux",
+                "register-package-group-or-account": "Register service package for group/account"
+            },
+            "system-parameter": {
+                "header": "System-parameter"
+            }
+        },
+        "admin":{
+            "manage-user":"User system",
+            "manage-admin":"Manage admins",
+            "manage-doctor":"Manage doctors",
+            "crud":"CRUD user",
+            "crud-redux":"CRUD redux",
+            "clinic":"Clinic",
+            "manage-clinic":"Manage clinics",
+            "specialty":"Specialty",
+            "manage-specialty":"Manage specialties",
+            "handbook":"Handbook",
+            "manage-handbook":"Manage handbooks"
+        },
+          "doctor":{
+          "manage-schedule":"Manage doctor's schedule"
+        }
+    },
+        "manage-user":{
+        "add":"Add new user",
+        "email":"Email",
+        "password":"Password",
+        "firstName":"First name",
+        "lastName":"Last name",
+        "phone":"Phone number",
+        "address":"Address",
+        "gender":"Gender",
+        "position":"Position",
+        "role":"RoleID",
+        "image":"Avatar",
+        "save":"Save",
+        "edit":"Save change"
+     },
+    "manage-schedule":{
+        "title":"Manage schedule checked",
+        "choose-doctor":"Choose doctor",
+        "choose-day":"Choose date",
+        "save-info":"Save info"
+    },
+     "patient":{
+        "detail-doctor":{
+            "schedule":"Schedule",
+             "no-schedule":"The doctor does not have an appointment during this time. Please choose another time!",
+             "choose":"Choose",
+             "book-free":"and(book free)"
+        },
+         "extra-info-doctor":{
+            "text-address":"Medical address",
+            "price":"Medical price",
+            "detail":"See detail",
+            "hide":"Hide price list",
+            "payment":"Patients can pay for expenses in",
+            "method":"forms",
+            "payment-method":"Patients can pay expenses in the form of:"
+        },
+         "profile-doctor":{
+            "price":"Medical price:",
+            "booking":"Free to booking"
+        },
+        "booking-modal":{
+            "title":"Medical appointment booking information",
+            "fullName":"Full name",
+            "phoneNumber":"Phone number",
+            "email":"Email",
+            "address":"Address",
+            "reason":"Reasons",
+            "birthday":"Birthday",
+            "gender":"Gender",
+            "confirm":"Confirm",
+            "cancel":"Cancel"
+        }
+    },
+     "admin":{
+        "manage-doctor":{
+            "title":"Create more doctor information",
+            "select-doctor":"Choose doctor",
+            "info":"Introductory Information:",
+            "save":"Save information",
+            "create":"Create information",
+            "price":"Price",
+            "payment":"Payment",
+            "province":"Province",
+            "nameClinic":"Clinic's name",
+            "addressClinic":"Clinic's address",
+            "note":"Note",
+            "choosePrice":"Price",
+            "choosePayment":"Payment",
+            "chooseProvince":"Province"
+        }
+    }
+}
