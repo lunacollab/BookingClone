@@ -74,9 +74,8 @@ let postVerifyBookAppointment = (data)=>{
           raw:false
        })
        if(appointment){
-         await appointment.save({
-           statusId: "S2"
-         });
+         appointment.statusId = "S2"
+         await appointment.save();
          resolve({
           errCode:0,
           errMessage:"Update the appointment succeed!"

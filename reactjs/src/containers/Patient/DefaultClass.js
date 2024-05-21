@@ -5,19 +5,13 @@ import { FormattedMessage } from "react-intl";
 class DefaultClass extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = {};
   }
-
-   componentDidUpdate(prevProps) {
-  }
+  componentDidMount() {}
+  componentDidUpdate(prevProps) {}
 
   render() {
-
-    return (
-        <>
-        </>
-    );
+    return <></>;
   }
 }
 
