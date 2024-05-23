@@ -126,6 +126,9 @@
         "manage-doctor":{
             "title":"Create more doctor information",
             "select-doctor":"Choose doctor",
+            "select-specialty":"Choose specialty",
+            "specialty":"Specialty",
+            "selected-clinic":"Select clinic",
             "info":"Introductory Information:",
             "save":"Save information",
             "create":"Create information",

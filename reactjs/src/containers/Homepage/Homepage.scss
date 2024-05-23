@@ -63,11 +63,25 @@
          }
 
          .img-customize{
-          img{
-            width: 95%;
-            height: 100%;
+         img{
+             width: 95%;
+            height: 100%; 
           }
          }
+
+      .specialty-customize {
+      .image-specialty {
+        width: 95%; 
+        height: 150px; 
+        background-size: cover;
+        background-position: center;
+        }
+        h3{
+          font-size:17px;
+        }
+      }
+
+         
           .customize{
             border:1px solid #f7d800;
             height:270px !important;

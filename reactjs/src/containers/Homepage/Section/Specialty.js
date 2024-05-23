@@ -2,17 +2,35 @@ import React, { Component } from "react";
 import { FormattedMessage } from "react-intl";
 import { connect } from "react-redux";
 import Slider from "react-slick";
-import specialtyImg from "../../../assets/specialty/care1.jpg";
 import { changeLanguageApp } from "../../../store/actions";
+import { getAllSpecialties } from "../../../services/userService";
 
 class Specialty extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      dataSpecialty: [],
+    };
+  }
+
+  async componentDidMount() {
+    let res = await getAllSpecialties();
+    if (res && res.errCode === 0) {
+      this.setState({
+        dataSpecialty: res.data ? res.data : [],
+      });
+    }
+  }
+
   changeLanguage = (language) => {
     this.props.changeLanguageAppRedux(language);
   };
+
   render() {
     let language = this.props.language;
+    let { dataSpecialty } = this.state;
     return (
-      <div className=" section-share section-specialty">
+      <div className="section-share section-specialty">
         <div className="section-container">
           <div className="section-header">
             <span className="title-section">
@@ -24,30 +42,19 @@ class Specialty extends Component {
           </div>
           <div className="section-body">
             <Slider {...this.props.settings}>
-              <div className="img-customize">
-                <img src={specialtyImg} />
-                <h3>1</h3>
-              </div>
-              <div className="img-customize">
-                <img src={specialtyImg} />
-                <h3>2</h3>
-              </div>
-              <div className="img-customize">
-                <img src={specialtyImg} />
-                <h3>3</h3>
-              </div>
-              <div className="img-customize">
-                <img src={specialtyImg} />
-                <h3>4</h3>
-              </div>
-              <div className="img-customize">
-                <img src={specialtyImg} />
-                <h3>5</h3>
-              </div>
-              <div className="img-customize">
-                <img src={specialtyImg} />
-                <h3>6</h3>
-              </div>
+              {dataSpecialty &&
+                dataSpecialty.length > 0 &&
+                dataSpecialty.map((item, index) => {
+                  return (
+                    <div className="specialty-customize" key={index}>
+                      <div
+                        className="image-specialty"
+                        style={{ backgroundImage: `url(${item.image})` }}
+                      ></div>
+                      <h3>{item.name}</h3>
+                    </div>
+                  );
+                })}
             </Slider>
           </div>
         </div>

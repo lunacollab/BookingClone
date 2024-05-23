@@ -12,6 +12,12 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      specialtyId: {
+        type: Sequelize.INTEGER,
+      },
+      clinicId: {
+        type: Sequelize.INTEGER,
+      },
       priceId: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -28,7 +34,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      nameClinic:{
+      nameClinic: {
         type: Sequelize.STRING,
         allowNull: false,
       },
@@ -38,7 +44,7 @@ module.exports = {
       count: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        defaultValue:0
+        defaultValue: 0,
       },
       paymentId: {
         type: Sequelize.STRING,

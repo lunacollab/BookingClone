@@ -25,12 +25,18 @@ class ManageRedux extends Component {
       listPrice: [],
       listPayment: [],
       listProvince: [],
+      listClinic: [],
+      listSpecialty: [],
       selectedPrice: "",
       selectedPayment: "",
       selectedProvince: "",
+      selectedClinic: "",
+      selectedSpecialty: "",
       nameClinic: "",
       addressClinic: "",
       note: "",
+      clinicId: "",
+      specialtyId: "",
     };
   }
   buildDataInputSelect = (inputData, type) => {
@@ -38,31 +44,36 @@ class ManageRedux extends Component {
     let { language } = this.props;
     if (inputData && inputData.length > 0) {
       inputData.map((item, index) => {
-        if(type === "USERS"){
-                 let object = {};
-                 let labelVi = `${item.lastName} ${item.firstName}`
-                 let labelEn =`${item.firstName} ${item.lastName}`
-                 object.label = language === LANGUAGES.VI ? labelVi : labelEn;
-                 object.value = item.id;
-                 result.push(object);
+        if (type === "USERS") {
+          let object = {};
+          let labelVi = `${item.lastName} ${item.firstName}`;
+          let labelEn = `${item.firstName} ${item.lastName}`;
+          object.label = language === LANGUAGES.VI ? labelVi : labelEn;
+          object.value = item.id;
+          result.push(object);
         }
-        if(type === "PRICE" ){
-               let object = {};
-               let labelVi = item.valueVi;
-               let labelEn = `${item.valueEn} USD`;
-               object.label = language === LANGUAGES.VI ? labelVi : labelEn;
-               object.value = item.keyMap;
-               result.push(object);
+        if (type === "PRICE") {
+          let object = {};
+          let labelVi = item.valueVi;
+          let labelEn = `${item.valueEn} USD`;
+          object.label = language === LANGUAGES.VI ? labelVi : labelEn;
+          object.value = item.keyMap;
+          result.push(object);
         }
-        if(type==="PAYMENT" || type==="PROVINCE"){
-           let object = {};
-           let labelVi = item.valueVi;
-           let labelEn = item.valueEn;
-           object.label = language === LANGUAGES.VI ? labelVi : labelEn;
-           object.value = item.keyMap;
-           result.push(object);
+        if (type === "PAYMENT" || type === "PROVINCE") {
+          let object = {};
+          let labelVi = item.valueVi;
+          let labelEn = item.valueEn;
+          object.label = language === LANGUAGES.VI ? labelVi : labelEn;
+          object.value = item.keyMap;
+          result.push(object);
         }
-
+        if (type === "SPECIALTY") {
+          let object = {};
+          object.label = item.name;
+          object.value = item.id;
+          result.push(object);
+        }
       });
     }
     return result;
@@ -71,31 +82,46 @@ class ManageRedux extends Component {
     this.props.fetchAllDoctors();
     this.props.getRequireDoctorInfo();
   }
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.allDoctorsRedux !== this.props.allDoctorsRedux) {
-      let dataSelect = this.buildDataInputSelect(this.props.allDoctorsRedux,"USERS");
+      let dataSelect = this.buildDataInputSelect(
+        this.props.allDoctorsRedux,
+        "USERS"
+      );
       this.setState({
         listDoctors: dataSelect,
       });
     }
     if (prevProps.language !== this.props.language) {
-      let dataSelect = this.buildDataInputSelect(this.props.allDoctorsRedux,"USERS");
-      let { resPayment, resPrice, resPronvince } =
+      let dataSelect = this.buildDataInputSelect(
+        this.props.allDoctorsRedux,
+        "USERS"
+      );
+      let { resPayment, resPrice, resPronvince, resSpecialty } =
         this.props.allRequiredDoctorInfo;
       let dataSelectedPrice = this.buildDataInputSelect(resPrice, "PRICE");
-      let dataSelectedPayment = this.buildDataInputSelect(resPayment,"PAYMENT");
-      let dataSelectedProvince = this.buildDataInputSelect( resPronvince,"PROVINCE");
+      let dataSelectedPayment = this.buildDataInputSelect(
+        resPayment,
+        "PAYMENT"
+      );
+      let dataSelectedProvince = this.buildDataInputSelect(
+        resPronvince,
+        "PROVINCE"
+      );
+      let dataSelectedSpecialty = this.buildDataSelect(resSpecialty, "SPECIALTY")
       this.setState({
         listDoctors: dataSelect,
         listPrice: dataSelectedPrice,
         listPayment: dataSelectedPayment,
         listProvince: dataSelectedProvince,
+        listSpecialty: dataSelectedSpecialty
       });
     }
 
     if (prevProps.detailDoctorRedux !== this.props.detailDoctorRedux) {
       let { detailDoctorRedux } = this.props;
-      let Markdowns = detailDoctorRedux.Markdown;
+      let Markdowns = detailDoctorRedux?.Markdown;
       if (Markdowns) {
         this.setState({
           contentMarkdown: Markdowns.contentMarkdown,
@@ -114,19 +140,26 @@ class ManageRedux extends Component {
     }
     if (prevProps.detailDoctorRedux !== this.props.detailDoctorRedux) {
       let { detailDoctorRedux } = this.props;
-      let {listPayment, listPrice,listProvince} = this.state
-      let DoctorInfors = detailDoctorRedux.Doctor_Info
-      let {priceId,paymentId,provinceId,nameClinic,addressClinic,note} = DoctorInfors;
-      let findItemPrice = listPrice.find((item) => {
+      let { listPayment, listPrice, listProvince } = this.state;
+      let DoctorInfors = detailDoctorRedux?.Doctor_Info;
+      if (DoctorInfors) {
+        let {
+          priceId,
+          paymentId,
+          provinceId,
+          nameClinic,
+          addressClinic,
+          note,
+        } = DoctorInfors;
+        let findItemPrice = listPrice.find((item) => {
           return item && item.value === priceId;
         });
-      let findItemPayment = listPayment.find(item=>{
-        return item && item.value === paymentId;
-      })
-      let findItemProvince = listProvince.find((item) => {
+        let findItemPayment = listPayment.find((item) => {
+          return item && item.value === paymentId;
+        });
+        let findItemProvince = listProvince.find((item) => {
           return item && item.value === provinceId;
         });
-      if (DoctorInfors) {
         this.setState({
           selectedPrice: findItemPrice,
           selectedPayment: findItemPayment,
@@ -149,17 +182,29 @@ class ManageRedux extends Component {
       }
     }
     if (prevProps.allRequiredDoctorInfo !== this.props.allRequiredDoctorInfo) {
-      let { resPayment, resPrice, resPronvince } =this.props.allRequiredDoctorInfo;
-      let dataSelectedPrice = this.buildDataInputSelect(resPrice,"PRICE");
-      let dataSelectedPayment = this.buildDataInputSelect(resPayment,"PAYMENT");
-      let dataSelectedProvince = this.buildDataInputSelect(resPronvince,"PROVINCE");
+      let { resPayment, resPrice, resPronvince,resSpecialty } =
+        this.props.allRequiredDoctorInfo;
+      let dataSelectedPrice = this.buildDataInputSelect(resPrice, "PRICE");
+      let dataSelectedPayment = this.buildDataInputSelect(
+        resPayment,
+        "PAYMENT"
+      );
+      let dataSelectedProvince = this.buildDataInputSelect(
+        resPronvince,
+        "PROVINCE"
+      );
+      let dataSelectedSpecialty = this.buildDataInputSelect(
+        resSpecialty,"SPECIALTY"
+      )
       this.setState({
         listPrice: dataSelectedPrice,
         listPayment: dataSelectedPayment,
         listProvince: dataSelectedProvince,
+        listSpecialty: dataSelectedSpecialty
       });
     }
   }
+
   handleEditorChange = ({ html, text }) => {
     this.setState({
       contentMarkdown: text,
@@ -187,24 +232,42 @@ class ManageRedux extends Component {
     this.setState({ selectedOption });
   };
   handleChangeSelectedDoctorInfo = async (selectedOption, name) => {
-    let stateName = name.name
-    let stateCopy = {...this.state}
-    stateCopy[stateName] = selectedOption
+    let stateName = name.name;
+    let stateCopy = { ...this.state };
+    stateCopy[stateName] = selectedOption;
     this.setState({
-      ...stateCopy
-    })
+      ...stateCopy,
+    });
   };
 
-  handleOnChangeText = (event,id) => {
-    let stateCopy = {...this.state}
-    stateCopy[id] = event.target.value
+  handleOnChangeText = (event, id) => {
+    let stateCopy = { ...this.state };
+    stateCopy[id] = event.target.value;
     this.setState({
-      ...stateCopy
+      ...stateCopy,
     });
   };
   render() {
-    let { hasOldData } = this.state;
-
+    let {
+      hasOldData,
+      listSpecialty,
+      listDoctors,
+      selectedOption,
+      description,
+      listPrice,
+      selectedPrice,
+      listPayment,
+      selectedPayment,
+      listProvince,
+      selectedProvince,
+      nameClinic,
+      addressClinic,
+      note,
+      selectedSpecialty,
+      selectedClinic,
+      listClinic,
+      contentMarkdown,
+    } = this.state;
     return (
       <div className="manage-doctor-container">
         <div className="manage-doctor-title">
@@ -216,9 +279,9 @@ class ManageRedux extends Component {
               <FormattedMessage id="admin.manage-doctor.select-doctor" />
             </label>
             <Select
-              value={this.state.selectedOption}
+              value={selectedOption}
               onChange={this.handleChange}
-              options={this.state.listDoctors}
+              options={listDoctors}
               placeholder={
                 <FormattedMessage id="admin.manage-doctor.select-doctor" />
               }
@@ -234,7 +297,7 @@ class ManageRedux extends Component {
               onChange={(event) =>
                 this.handleOnChangeText(event, "description")
               }
-              value={this.state.description}
+              value={description}
             ></textarea>
           </div>
         </div>
@@ -244,9 +307,9 @@ class ManageRedux extends Component {
               <FormattedMessage id="admin.manage-doctor.price" />
             </label>
             <Select
-              value={this.state.selectedPrice}
+              value={selectedPrice}
               onChange={this.handleChangeSelectedDoctorInfo}
-              options={this.state.listPrice}
+              options={listPrice}
               placeholder={
                 <FormattedMessage id="admin.manage-doctor.choosePrice" />
               }
@@ -258,9 +321,9 @@ class ManageRedux extends Component {
               <FormattedMessage id="admin.manage-doctor.payment" />
             </label>
             <Select
-              value={this.state.selectedPayment}
+              value={selectedPayment}
               onChange={this.handleChangeSelectedDoctorInfo}
-              options={this.state.listPayment}
+              options={listPayment}
               placeholder={
                 <FormattedMessage id="admin.manage-doctor.choosePayment" />
               }
@@ -272,9 +335,9 @@ class ManageRedux extends Component {
               <FormattedMessage id="admin.manage-doctor.province" />
             </label>
             <Select
-              value={this.state.selectedProvince}
+              value={selectedProvince}
               onChange={this.handleChangeSelectedDoctorInfo}
-              options={this.state.listProvince}
+              options={listProvince}
               placeholder={
                 <FormattedMessage id="admin.manage-doctor.chooseProvince" />
               }
@@ -288,7 +351,7 @@ class ManageRedux extends Component {
             <input
               className="form-control"
               onChange={(event) => this.handleOnChangeText(event, "nameClinic")}
-              value={this.state.nameClinic}
+              value={nameClinic}
             />
           </div>
           <div className="col-4 form-group">
@@ -300,7 +363,7 @@ class ManageRedux extends Component {
               onChange={(event) =>
                 this.handleOnChangeText(event, "addressClinic")
               }
-              value={this.state.addressClinic}
+              value={addressClinic}
             />
           </div>
           <div className="col-4 form-group">
@@ -310,27 +373,55 @@ class ManageRedux extends Component {
             <input
               className="form-control"
               onChange={(event) => this.handleOnChangeText(event, "note")}
-              value={this.state.note}
+              value={note}
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-4 form-group">
+            <label>
+              <FormattedMessage id="admin.manage-doctor.specialty" />
+            </label>
+            <Select
+              value={selectedSpecialty}
+              onChange={this.handleChangeSelectedDoctorInfo}
+              options={listSpecialty}
+              placeholder={
+                <FormattedMessage id="admin.manage-doctor.select-specialty" />
+              }
+              name="selectedSpecialty"
+            />
+          </div>
+          <div className="col-4 form-group">
+            <label>
+              <FormattedMessage id="admin.manage-doctor.selected-clinic" />
+            </label>
+            <Select
+              value={selectedClinic}
+              onChange={this.handleChangeSelectedDoctorInfo}
+              options={listClinic}
+              placeholder={
+                <FormattedMessage id="admin.manage-doctor.selected-clinic" />
+              }
+              name="selected-clinic"
             />
           </div>
         </div>
         <div className="manage-doctor-editor">
           <MdEditor
-            style={{ height: "500px" }}
+            style={{ height: "300px" }}
             renderHTML={(text) => mdParser.render(text)}
             onChange={this.handleEditorChange}
-            value={this.state.contentMarkdown}
+            value={contentMarkdown}
           />
         </div>
         <button
           className={
-            hasOldData === true
-              ? "save-contain-doctor"
-              : "create-contain-doctor"
+            hasOldData ? "save-contain-doctor" : "create-contain-doctor"
           }
           onClick={this.handleSaveContentMarkdown}
         >
-          {hasOldData === true ? (
+          {hasOldData ? (
             <span>
               <FormattedMessage id="admin.manage-doctor.save" />
             </span>
