@@ -140,7 +140,7 @@ class ManageRedux extends Component {
     }
     if (prevProps.detailDoctorRedux !== this.props.detailDoctorRedux) {
       let { detailDoctorRedux } = this.props;
-      let { listPayment, listPrice, listProvince } = this.state;
+      let { listPayment, listPrice, listProvince,listSpecialty } = this.state;
       let DoctorInfors = detailDoctorRedux?.Doctor_Info;
       if (DoctorInfors) {
         let {
@@ -150,6 +150,7 @@ class ManageRedux extends Component {
           nameClinic,
           addressClinic,
           note,
+          specialtyId,
         } = DoctorInfors;
         let findItemPrice = listPrice.find((item) => {
           return item && item.value === priceId;
@@ -160,10 +161,14 @@ class ManageRedux extends Component {
         let findItemProvince = listProvince.find((item) => {
           return item && item.value === provinceId;
         });
+        let findItemSpecialty = listSpecialty.find((item) => {
+          return item && item.value === specialtyId;
+        })
         this.setState({
           selectedPrice: findItemPrice,
           selectedPayment: findItemPayment,
           selectedProvince: findItemProvince,
+          selectedSpecialty: findItemSpecialty,
           nameClinic: nameClinic,
           addressClinic: addressClinic,
           note: note,
@@ -174,6 +179,7 @@ class ManageRedux extends Component {
           selectedPrice: "",
           selectedPayment: "",
           selectedProvince: "",
+          selectedSpecialty: "",
           nameClinic: "",
           addressClinic: "",
           note: "",
@@ -225,6 +231,8 @@ class ManageRedux extends Component {
       nameClinic: this.state.nameClinic,
       addressClinic: this.state.addressClinic,
       note: this.state.note,
+      clinicId:this.state.selectedClinic && this.state.selectedClinic.value ? this.state.selectedClinic.value : "",
+      specialtyId:this.state.selectedSpecialty.value
     });
   };
   handleChange = async (selectedOption, name) => {
