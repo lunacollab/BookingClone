@@ -1,6 +1,6 @@
 import MarkdownIt from "markdown-it";
-import React, { Component } from "react";
 import MdEditor from "react-markdown-editor-lite";
+import React, { Component } from "react";
 import "react-markdown-editor-lite/lib/index.css";
 import { connect } from "react-redux";
 import Select from "react-select";
