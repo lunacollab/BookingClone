@@ -43,10 +43,6 @@ class MedicalSpecialty extends Component {
                   <img src={specialtyImg} />
                   <h3>5</h3>
                 </div>
-                <div className="img-customize">
-                  <img src={specialtyImg} />
-                  <h3>6</h3>
-                </div>
               </Slider>
             </div>
           </div>

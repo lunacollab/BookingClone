@@ -6,6 +6,7 @@ import { getProfileDoctorById } from "../../../services/userService";
 import { LANGUAGES } from "../../../utils";
 import NumberFormat from "react-number-format";
 import _ from "lodash";
+import { Link } from "react-router-dom";
 
 
 class ProfileDoctor extends Component {
@@ -29,11 +30,11 @@ class ProfileDoctor extends Component {
     }
     return result;
   };
-  componentDidUpdate(prevProps) {
-    // if (this.props.doctorId !== prevProps.doctorId) {
-    //   let data = this.getInfoDoctorById(this.props.doctorId);
-    //   this.setState({ dataProfile: data });
-    // }
+ async componentDidUpdate(prevProps) {
+    if (this.props.doctorId !== prevProps.doctorId) {
+      let data =  await this.getInfoDoctorById(this.props.doctorId);
+      this.setState({ dataProfile: data });
+    }
   }
   renderPrice = (dataProfile, language) => {
     if (
@@ -62,7 +63,14 @@ class ProfileDoctor extends Component {
  
   render() {
     let { dataProfile } = this.state;
-    let { language, isShowDescriptionDoctor, dataTime } = this.props;
+    let {
+      language,
+      isShowDescriptionDoctor,
+      dataTime,
+      isShowLinkDetail,
+      isShowPrice,
+      doctorId
+    } = this.props;
     let nameVi = "",
       nameEn = "";
     if (dataProfile && dataProfile.positionData) {
@@ -89,14 +97,22 @@ class ProfileDoctor extends Component {
                   )}
                 </>
               ) : (
-                <>{this.props.renderTimeBooking(this.props.dataTime)}</>
+                <>{this.props.renderTimeBooking(dataTime)}</>
               )}
             </div>
           </div>
         </div>
-        <div className="price">
-          <FormattedMessage id="patient.profile-doctor.price"/> {this.renderPrice(dataProfile, language)}
-        </div>
+        {isShowLinkDetail === true && (
+          <div className="view-detail-doctor">
+            <Link to={`/detail-doctor/${doctorId}`}>Xem thêm </Link>
+          </div>
+        )}
+        {isShowPrice === true && (
+          <div className="price">
+            <FormattedMessage id="patient.profile-doctor.price"/>
+            {this.renderPrice(dataProfile, language)}
+          </div>
+        )}
       </div>
     );
   }

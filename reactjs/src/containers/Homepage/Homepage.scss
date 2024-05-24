@@ -62,7 +62,7 @@
             }
          }
 
-         .img-customize{
+       .img-customize{
          img{
              width: 95%;
             height: 100%; 
@@ -80,7 +80,17 @@
           font-size:17px;
         }
       }
-
+      .medical-specialty{
+        .image-medical-specialty{
+        width: 95%; 
+        height: 150px; 
+        background-size: cover;
+        background-position: center;
+        }
+        h3{
+          font-size:17px;
+        }
+      }
          
           .customize{
             border:1px solid #f7d800;

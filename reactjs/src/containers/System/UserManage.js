@@ -10,6 +10,7 @@ import { emitter } from "../../utils/emitter";
 import ModalEditUser from "./ModalEditUser";
 import ModalUser from "./ModalUser";
 import "./UserManage.scss";
+import { toast } from "react-toastify";
 class UserManage extends Component {
   constructor(props) {
     super(props);
@@ -24,90 +25,128 @@ class UserManage extends Component {
   async componentDidMount() {
     await this.getAllUsersFromReact();
   }
+
   getAllUsersFromReact = async () => {
-    let respone = await getAllUsers("ALL");
-    if (respone && respone.errCode === 0) {
-      this.setState({
-        arrUsers: respone.users,
-      });
+    try {
+      const response = await getAllUsers("ALL");
+      if (response && response.errCode === 0) {
+        this.setState({ arrUsers: response.users });
+      } else {
+        alert(response.errMessage);
+      }
+    } catch (error) {
+      console.error("Failed to fetch users", error);
     }
   };
+
   handleAddNewUser = () => {
-    this.setState({
-      isOpenModalUser: true,
-    });
+    this.setState({ isOpenModalUser: true });
   };
+
   toggleUserModal = () => {
-    this.setState({
-      isOpenModalUser: !this.state.isOpenModalUser,
-    });
+    this.setState((prevState) => ({
+      isOpenModalUser: !prevState.isOpenModalUser,
+    }));
   };
-  toogleUserEditModal = () => {
-    this.setState({ isOpenModalEditUser: !this.state.isOpenModalEditUser });
+
+  toggleUserEditModal = () => {
+    this.setState((prevState) => ({
+      isOpenModalEditUser: !prevState.isOpenModalEditUser,
+    }));
   };
+
+  validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  validatePassword = (password) => {
+     const passwordRegex = /^(?=.*[A-Z]).{8,}$/;
+    return passwordRegex.test(password);
+  };
+
   createNewUser = async (data) => {
+    if (!this.validateEmail(data.email)) {
+      toast.error("Invalid email format");
+      return;
+    }
+
+    if (!this.validatePassword(data.password)) {
+      toast.error(
+        "Password must be at least 8 characters long and include at least one uppercase letter"
+      );
+      return;
+    }
+
     try {
-      let respone = await createNewUserService(data);
-      if (respone && respone.errCode !== 0) {
-        alert(respone.errMessage);
+      const response = await createNewUserService(data);
+      if (response && response.errCode !== 0) {
+        alert(response.errMessage);
       } else {
         await this.getAllUsersFromReact();
-        this.setState({
-          isOpenModalUser: false,
-        });
+        this.setState({ isOpenModalUser: false });
         emitter.emit("EVENT_CLEAR_MODAL_DATA");
       }
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.error("Failed to create user", error);
     }
   };
+
   handleDeleteUser = async (user) => {
+    if (
+      !window.confirm(`Are you sure you want to delete user ${user.email}?`)
+    ) {
+      return;
+    }
+
     try {
-      let deleteUser = await deleteUserById(user.id);
-      if (deleteUser && deleteUser.errCode !== 0) {
-        alert(deleteUser.message);
+      const response = await deleteUserById(user.id);
+      if (response && response.errCode !== 0) {
+        alert(response.message);
       } else {
         await this.getAllUsersFromReact();
       }
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.error("Failed to delete user", error);
     }
   };
+
   handleEditUser = (user) => {
     this.setState({
       isOpenModalEditUser: true,
       userEdit: user,
     });
   };
+
   doEditUser = async (user) => {
     try {
-      let respone = await editUserService(user);
-      if (respone && respone.errCode !== 0) {
-        alert(respone.errMessage);
+      const response = await editUserService(user);
+      if (response && response.errCode !== 0) {
+        alert(response.errMessage);
       } else {
         await this.getAllUsersFromReact();
-        this.setState({
-          isOpenModalEditUser: false,
-        });
+        this.setState({ isOpenModalEditUser: false });
       }
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.error("Failed to edit user", error);
     }
   };
+
   render() {
-    let arrUsers = this.state.arrUsers;
+    const { arrUsers, isOpenModalUser, isOpenModalEditUser, userEdit } =
+      this.state;
     return (
       <div className="users-container">
         <ModalUser
-          isOpen={this.state.isOpenModalUser}
+          isOpen={isOpenModalUser}
           toggleFormParent={this.toggleUserModal}
           createNewUser={this.createNewUser}
         />
-        {this.state.isOpenModalEditUser && (
+        {isOpenModalEditUser && (
           <ModalEditUser
-            isOpen={this.state.isOpenModalEditUser}
-            toggleFormParent={this.toogleUserEditModal}
-            currentUser={this.state.userEdit}
+            isOpen={isOpenModalEditUser}
+            toggleFormParent={this.toggleUserEditModal}
+            currentUser={userEdit}
             editUser={this.doEditUser}
           />
         )}
@@ -115,7 +154,7 @@ class UserManage extends Component {
         <div className="mx-1">
           <button
             className="btn btn-primary px-3"
-            onClick={() => this.handleAddNewUser()}
+            onClick={this.handleAddNewUser}
           >
             <i className="fas fa-plus me-1"></i>Add new users
           </button>
