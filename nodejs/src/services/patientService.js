@@ -11,30 +11,42 @@ let buildUrlEmail = (doctorId,token)=>{
 let postBookAppointment = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      if (!data.email || !data.doctorId || !data.timeType || !data.date||!data.fullName) {
+      if (
+        !data.email ||
+        !data.doctorId ||
+        !data.timeType ||
+        !data.date ||
+        !data.fullName||
+	      !data.selectedGender||
+	      !data.address
+      ) {
         resolve({
           errCode: 1,
           errMessage: "Missing required parameter",
         });
       } else {
-         let token = uuidv4();
+        let token = uuidv4();
         await emailService.sendSimpleEmail({
           receiverEmail: data.email,
           patientName: data.fullName,
           time: data.timeString,
           doctorName: data.doctorName,
-          language:data.language,
-          redirectLink: buildUrlEmail(data.doctorId,token),
+          language: data.language,
+          redirectLink: buildUrlEmail(data.doctorId, token),
         });
+
         let user = await db.User.findOrCreate({
           where: { email: data.email },
           defaults: {
             email: data.email,
             roleId: "R3",
+            gender:data.selectedGender,
+	          address:data.address,
+            firstName:data.fullName
           },
         });
         if (user && user[0]) {
-          await db.Booking.findOrCreate({
+          let booking = await db.Booking.findOrCreate({
             where: { patientId: user[0].id },
             defaults: {
               statusId: "S1",
@@ -42,20 +54,23 @@ let postBookAppointment = (data) => {
               patientId: user[0].id,
               date: data.date,
               timeType: data.timeType,
-              token:token
+              token: token,
             },
           });
         }
+
         resolve({
           errCode: 0,
           errMessage: "Save info patient succeed!",
         });
       }
     } catch (e) {
+      console.error("Error:", e);
       reject(e);
     }
   });
 };
+
 let postVerifyBookAppointment = (data)=>{
   return new Promise(async(resolve, reject)=>{
     try{

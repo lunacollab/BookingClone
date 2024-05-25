@@ -9,9 +9,8 @@ import * as actions from "../../../store/actions";
 import { LANGUAGES, CRUD_ACTIONS } from "../../../utils";
 import { FormattedMessage } from "react-intl";
 
-
 const mdParser = new MarkdownIt();
-class ManageRedux extends Component {
+class ManageDoctor extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -74,6 +73,12 @@ class ManageRedux extends Component {
           object.value = item.id;
           result.push(object);
         }
+        if (type === "CLINIC") {
+          let object = {};
+          object.label = item.name;
+          object.value = item.id;
+          result.push(object);
+        }
       });
     }
     return result;
@@ -98,7 +103,7 @@ class ManageRedux extends Component {
         this.props.allDoctorsRedux,
         "USERS"
       );
-      let { resPayment, resPrice, resPronvince, resSpecialty } =
+      let { resPayment, resPrice, resPronvince, resSpecialty, resClinic } =
         this.props.allRequiredDoctorInfo;
       let dataSelectedPrice = this.buildDataInputSelect(resPrice, "PRICE");
       let dataSelectedPayment = this.buildDataInputSelect(
@@ -109,13 +114,18 @@ class ManageRedux extends Component {
         resPronvince,
         "PROVINCE"
       );
-      let dataSelectedSpecialty = this.buildDataSelect(resSpecialty, "SPECIALTY")
+      let dataSelectedSpecialty = this.buildDataSelect(
+        resSpecialty,
+        "SPECIALTY"
+      );
+      let dataSelectedClinic = this.buildDataSelect(resClinic, "CLINIC");
       this.setState({
         listDoctors: dataSelect,
         listPrice: dataSelectedPrice,
         listPayment: dataSelectedPayment,
         listProvince: dataSelectedProvince,
-        listSpecialty: dataSelectedSpecialty
+        listSpecialty: dataSelectedSpecialty,
+        listClinic: dataSelectedClinic,
       });
     }
 
@@ -140,7 +150,8 @@ class ManageRedux extends Component {
     }
     if (prevProps.detailDoctorRedux !== this.props.detailDoctorRedux) {
       let { detailDoctorRedux } = this.props;
-      let { listPayment, listPrice, listProvince,listSpecialty } = this.state;
+      let { listPayment, listPrice, listProvince, listSpecialty, listClinic } =
+        this.state;
       let DoctorInfors = detailDoctorRedux?.Doctor_Info;
       if (DoctorInfors) {
         let {
@@ -151,6 +162,7 @@ class ManageRedux extends Component {
           addressClinic,
           note,
           specialtyId,
+          clinicId,
         } = DoctorInfors;
         let findItemPrice = listPrice.find((item) => {
           return item && item.value === priceId;
@@ -163,12 +175,16 @@ class ManageRedux extends Component {
         });
         let findItemSpecialty = listSpecialty.find((item) => {
           return item && item.value === specialtyId;
-        })
+        });
+        let findItemClinic = listClinic.find((item) => {
+          return item && item.value === clinicId;
+        });
         this.setState({
           selectedPrice: findItemPrice,
           selectedPayment: findItemPayment,
           selectedProvince: findItemProvince,
           selectedSpecialty: findItemSpecialty,
+          selectedClinic: findItemClinic,
           nameClinic: nameClinic,
           addressClinic: addressClinic,
           note: note,
@@ -180,6 +196,7 @@ class ManageRedux extends Component {
           selectedPayment: "",
           selectedProvince: "",
           selectedSpecialty: "",
+          selectedClinic: "",
           nameClinic: "",
           addressClinic: "",
           note: "",
@@ -188,7 +205,7 @@ class ManageRedux extends Component {
       }
     }
     if (prevProps.allRequiredDoctorInfo !== this.props.allRequiredDoctorInfo) {
-      let { resPayment, resPrice, resPronvince,resSpecialty } =
+      let { resPayment, resPrice, resPronvince, resSpecialty, resClinic } =
         this.props.allRequiredDoctorInfo;
       let dataSelectedPrice = this.buildDataInputSelect(resPrice, "PRICE");
       let dataSelectedPayment = this.buildDataInputSelect(
@@ -200,13 +217,16 @@ class ManageRedux extends Component {
         "PROVINCE"
       );
       let dataSelectedSpecialty = this.buildDataInputSelect(
-        resSpecialty,"SPECIALTY"
-      )
+        resSpecialty,
+        "SPECIALTY"
+      );
+      let dataSelectedClinic = this.buildDataInputSelect(resClinic, "CLINIC");
       this.setState({
         listPrice: dataSelectedPrice,
         listPayment: dataSelectedPayment,
         listProvince: dataSelectedProvince,
-        listSpecialty: dataSelectedSpecialty
+        listSpecialty: dataSelectedSpecialty,
+        listClinic: dataSelectedClinic,
       });
     }
   }
@@ -231,8 +251,8 @@ class ManageRedux extends Component {
       nameClinic: this.state.nameClinic,
       addressClinic: this.state.addressClinic,
       note: this.state.note,
-      clinicId:this.state.selectedClinic && this.state.selectedClinic.value ? this.state.selectedClinic.value : "",
-      specialtyId:this.state.selectedSpecialty.value
+      clinicId: this.state.selectedClinic.value,
+      specialtyId: this.state.selectedSpecialty.value,
     });
   };
   handleChange = async (selectedOption, name) => {
@@ -411,7 +431,7 @@ class ManageRedux extends Component {
               placeholder={
                 <FormattedMessage id="admin.manage-doctor.selected-clinic" />
               }
-              name="selected-clinic"
+              name="selectedClinic"
             />
           </div>
         </div>
@@ -449,18 +469,19 @@ const mapStateToProps = (state) => {
     allDoctorsRedux: state.admin.allDoctors,
     language: state.app.language,
     detailDoctorRedux: state.admin.detailDoctor,
-    allRequiredDoctorInfo:state.admin.allRequiredDoctorInfo,
-    type:state.admin.type,
+    allRequiredDoctorInfo: state.admin.allRequiredDoctorInfo,
+    type: state.admin.type,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     fetchAllDoctors: () => dispatch(actions.fetchAllDoctors()),
-    saveDetailDoctorAction: (data) => dispatch(actions.saveDetailDoctorAction(data)),
-    getRequireDoctorInfo:()=> dispatch(actions.getRequireDoctorInfo()),
+    saveDetailDoctorAction: (data) =>
+      dispatch(actions.saveDetailDoctorAction(data)),
+    getRequireDoctorInfo: () => dispatch(actions.getRequireDoctorInfo()),
     fetchAllDoctorInfor: (id) => dispatch(actions.fetchAllDoctorInfor(id)),
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ManageRedux);
+export default connect(mapStateToProps, mapDispatchToProps)(ManageDoctor);

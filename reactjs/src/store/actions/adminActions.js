@@ -9,7 +9,8 @@ import {
   getDoctorLimitService,
   saveDetailDoctor,
   getDoctorInfor,
-  getAllSpecialties
+  getAllSpecialties,
+  getAllClinics
 } from "../../services/userService";
 import actionTypes from "./actionTypes";
 
@@ -302,16 +303,19 @@ export const getRequireDoctorInfo = () => {
       let resPayment = await getAllCodeService("PAYMENT");
       let resPronvince = await getAllCodeService("PROVINCE");
       let resSpecialty  = await getAllSpecialties()
+      let resClinic = await getAllClinics()
       if (resPrice && resPrice.errCode === 0 
         && resPayment && resPayment.errCode == 0
         && resPronvince && resPronvince.errCode === 0
         && resSpecialty && resSpecialty.errCode === 0
+        && resClinic && resClinic.errCode === 0
         ) {
           let data = {
             resPrice: resPrice.data,
             resPayment: resPayment.data,
             resPronvince: resPronvince.data,
-            resSpecialty:resSpecialty.data
+            resSpecialty:resSpecialty.data,
+            resClinic: resClinic.data
           }
         dispatch(fetchRequiredDoctorSuccess(data));
       } else {

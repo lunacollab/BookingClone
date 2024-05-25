@@ -67,11 +67,15 @@ export const adminMenu = [
 
 export const doctorMenu = [
   {
-    name:'menu.admin.manage-user',
+    name: "menu.admin.manage-user",
     menus: [
-      {  
+      {
         name: "menu.doctor.manage-schedule",
         link: "/doctor/mange-schedule",
+      },
+      {
+        name: "menu.doctor.manage-patient",
+        link: "/doctor/mange-patient",
       }
     ],
   },

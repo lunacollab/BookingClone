@@ -1,3 +1,4 @@
+import { includes } from "lodash";
 import db from "../models/index";
 require("dotenv").config();
 let MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
@@ -113,7 +114,7 @@ let saveDetailInforDoctor = (inputData) => {
           doctorInfo.addressClinic = inputData.addressClinic;
           doctorInfo.note = inputData.note;
           doctorInfo.specialtyId = inputData.specialtyId;
-          doctorInfo.clinicId = inputData.clinicId ? inputData.clinicId : null;
+          doctorInfo.clinicId = inputData.clinicId;
           await doctorInfo.save();
         } else {
           await db.Doctor_Info.create({
@@ -124,7 +125,7 @@ let saveDetailInforDoctor = (inputData) => {
             nameClinic: inputData.nameClinic,
             addressClinic: inputData.addressClinic,
             specialtyId: inputData.specialtyId,
-            clinicId: inputData.clinicId ? inputData.clinicId : null,
+            clinicId: clinicId,
             note: inputData.note,
           });
         }
@@ -140,6 +141,7 @@ let saveDetailInforDoctor = (inputData) => {
     }
   });
 };
+
 
 let getDetailDoctorById = (inputId) => {
   return new Promise(async (resolve, reject) => {
@@ -421,6 +423,45 @@ let getProfileDoctorById = (doctorId)=>{
   }
  })
 };
+let getListPatientForDoctor = (doctorId,date)=>{
+  return new Promise(async(resolve, reject)=>{
+    try{
+       if(!doctorId||!date){
+          resolve({
+            errCode:1,
+            errMessage:"Missing required parameters"
+          })
+        }else{
+          let data = await db.Booking.findAll({
+            where: {
+              statusId: "S2",
+              doctorId: doctorId,
+              date: date,
+            },
+            include: [
+              {
+                model: db.User,
+                as:"patientData",
+                attributes: ["email", "firstName","address","gender"],
+                include:[
+                  {model:db.Allcode, as:"genderData", attributes: ["valueVi","valueEn"]}
+              ]
+              },
+            ],
+            raw: false,
+            nest: true,
+          });
+            if (!data) data = {};
+            resolve({
+              errCode: 0,
+              data: data,
+            });
+        }
+    }catch(e){
+      reject(e)
+    }
+  })
+}
 module.exports = {
   getDoctorLimit,
   getAllDoctors,
@@ -430,4 +471,5 @@ module.exports = {
   getScheduleDoctorByDate,
   getExtraInfoDoctorById,
   getProfileDoctorById,
+  getListPatientForDoctor,
 };
