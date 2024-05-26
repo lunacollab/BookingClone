@@ -56,6 +56,9 @@ let postBookAppointment = (data) => {
               timeType: data.timeType,
               token: token,
             },
+            order: [
+              ["timeType"],
+            ],
           });
         }
 
